@@ -65,11 +65,11 @@ export async function fetchParkingNearby(
 }
 
 function parseElements(elements: OverpassElement[]): OsmParkingSpot[] {
-  return elements
-    .map((el) => {
-      const lat = el.lat ?? el.center?.lat;
-      const lng = el.lon ?? el.center?.lon;
-      if (lat === undefined || lng === undefined) return null;
+  const results: OsmParkingSpot[] = [];
+  for (const el of elements) {
+    const lat = el.lat ?? el.center?.lat;
+    const lng = el.lon ?? el.center?.lon;
+    if (lat === undefined || lng === undefined) continue;
 
       const tags = el.tags ?? {};
       const name =
@@ -102,14 +102,14 @@ function parseElements(elements: OverpassElement[]): OsmParkingSpot[] {
       }
       // それ以外は null（不明）
 
-      return {
-        id: `osm-${el.type}-${el.id}`,
-        name,
-        position: { lat, lng },
-        largeVehicle,
-        source: "osm" as const,
-        raw: tags,
-      };
-    })
-    .filter((x): x is OsmParkingSpot => x !== null);
+    results.push({
+      id: `osm-${el.type}-${el.id}`,
+      name,
+      position: { lat, lng },
+      largeVehicle,
+      source: "osm",
+      raw: tags,
+    });
+  }
+  return results;
 }
