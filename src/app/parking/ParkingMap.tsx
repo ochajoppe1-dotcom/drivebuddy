@@ -166,7 +166,10 @@ export default function ParkingMap() {
         </div>
       )}
 
-      <div className="flex-1 relative" style={{ minHeight: "60vh" }}>
+      <div
+        className="relative"
+        style={{ height: "calc(100vh - 180px)", minHeight: "400px" }}
+      >
         {showList ? (
           /* リスト表示 */
           <div className="absolute inset-0 overflow-y-auto bg-[#FFF8E7] p-4">
