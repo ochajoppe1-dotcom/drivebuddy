@@ -23,8 +23,8 @@ export const metadata: Metadata = {
     title: "DriveBuddy",
   },
   icons: {
-    icon: "/icons/icon-192.png",
-    apple: "/icons/icon-192.png",
+    icon: "/icons/icon-192.svg",
+    apple: "/icons/icon-192.svg",
   },
 };
 

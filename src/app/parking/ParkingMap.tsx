@@ -16,17 +16,19 @@ const defaultCenter = {
 };
 
 // マーカーのSVGアイコン（型別・色別）
+// btoa は日本語不可なので encodeURIComponent でURLエンコード方式を採用
 function makeMarkerIcon(largeVehicle: boolean, isSelected: boolean) {
   const color = largeVehicle ? "#1A365D" : "#FF8C42";
   const scale = isSelected ? 1.2 : 1;
-  // data URI で SVG マーカーを作成
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${36 * scale}" height="${48 * scale}" viewBox="0 0 36 48">
-      <path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z" fill="${color}" stroke="white" stroke-width="2"/>
-      <text x="18" y="24" text-anchor="middle" font-size="18" fill="white" font-family="sans-serif" font-weight="bold">${largeVehicle ? "大" : "P"}</text>
-    </svg>
-  `;
-  return `data:image/svg+xml;base64,${typeof window !== "undefined" ? btoa(svg) : ""}`;
+  const label = largeVehicle ? "L" : "P"; // Latin1範囲のみ
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${36 * scale}" height="${48 * scale}" viewBox="0 0 36 48"><path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z" fill="${color}" stroke="white" stroke-width="2"/><text x="18" y="24" text-anchor="middle" font-size="18" fill="white" font-family="sans-serif" font-weight="bold">${label}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+// 現在地マーカー
+function makeUserMarkerIcon() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
 // 2点間の距離（km）を計算
@@ -228,11 +230,7 @@ export default function ParkingMap() {
               <MarkerF
                 position={userPos}
                 icon={{
-                  url: `data:image/svg+xml;base64,${btoa(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                    </svg>
-                  `)}`,
+                  url: makeUserMarkerIcon(),
                 }}
                 zIndex={1000}
               />
